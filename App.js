@@ -23,30 +23,19 @@ export default function App() {
     if (arr == null || !str) {
       setArr(Leave_type);
     } else {
+      console.log(str.toUpperCase());
       leaveType = Leave_type.filter((leaveType) => {
-        // console.log("ret", !leaveType.title.indexOf(str));
-        return !leaveType.title.indexOf(str);
+        console.log(str.toUpperCase());
+        if (!leaveType.title.toUpperCase().indexOf(str.toUpperCase())) {
+          return true;
+        }
       });
       setArr(leaveType);
     }
-    // console.log("leaveTypes", leaveType);
-
-    // if (arr == null) {
-    //   setArr(fruits);
-    // } else {
-    //   const fruitFilter = fruits.filter((fruits) => {
-    //     // return !fruits.indexOf(str);
-    //     console.log(!fruits.title.indexOf(str));
-    //   });
-    //   setArr(fruitFilter);
-    //   console.log(fruitFilter);
-    // }
   };
-  // arryFilter("SA Days");
-
-  // console.log();
   const [leaveVal, setLeaveVal] = useState("");
-  const [leaveFlag, setFruitFlag] = useState(false);
+  const [leaveFlag, setLeaveFlag] = useState(false);
+  const [attTypeId, setAttTypeId] = useState();
   return (
     <View style={styles.container}>
       <View
@@ -54,31 +43,49 @@ export default function App() {
           flex: 1,
           alignSelf: "center",
           alignContent: "center",
-          marginTop: 50,
+          // marginTop: 50,
+          top: 100,
+          position: "absolute",
+          // zIndex: 100,
+          // backgroundColor: "red",
         }}
       >
         <TextInput
-          label="search fruit"
+          label="Absence Type"
           editable
           value={leaveVal}
           style={{ width: 300, height: 50 }}
-          right={<TextInput.Icon name="chevron-down" />}
+          // right={<TextInput.Icon name="chevron-down" />}
           onChangeText={(text) => {
             setLeaveVal(text);
-            setFruitFlag(true);
-            arryFilter(text.toUpperCase());
+            setLeaveFlag(true);
+            arryFilter(text);
           }}
           onFocus={() => {
-            setFruitFlag(true);
+            setLeaveFlag(true);
             arryFilter();
           }}
           onBlur={() => {
-            setFruitFlag(false);
+            setLeaveFlag(false);
+            Leave_type.map((item, index) => {
+              if (leaveVal.toUpperCase() == item.title.toUpperCase()) {
+                console.log("item.id", item.id);
+                setAttTypeId(item.id);
+              }
+            });
           }}
         />
 
-        <View style={{ position: "absolute", top: "15%", height: 100 }}>
-          <ScrollView style={{}} keyboardShouldPersistTaps={true}>
+        <View
+          style={{
+            position: "absolute",
+            top: 50,
+            height: 100,
+            elevation: 1,
+            zIndex: 1000,
+          }}
+        >
+          <ScrollView style={{}} keyboardShouldPersistTaps={"always"}>
             {leaveFlag
               ? arr.map((item, index) => {
                   return (
@@ -89,29 +96,32 @@ export default function App() {
                         borderRadius: 1,
                         padding: 5,
                         elevation: 1,
+                        backgroundColor: "white",
+                        // position: "relative",
                       }}
                     >
-                      <Button
+                      {/* <Button
                         onPress={() => {
                           setLeaveVal(item.title);
-                          setFruitFlag(false);
+                          setLeaveFlag(false);
                         }}
                         color="black"
                         style={{ alignContent: "flex-start" }}
                       >
                         {item.title}
-                      </Button>
-                      {/* <TouchableOpacity
+                      </Button> */}
+                      <TouchableOpacity
                         onPress={() => {
                           setLeaveVal(item.title);
-                          setFruitFlag(false);
+                          setAttTypeId(item.id);
+                          setLeaveFlag(false);
                         }}
                         style={{ flex: 1 }}
                       >
                         <View>
                           <Text key={index}>{item.title}</Text>
                         </View>
-                      </TouchableOpacity> */}
+                      </TouchableOpacity>
                     </View>
                   );
                 })
@@ -119,15 +129,18 @@ export default function App() {
           </ScrollView>
         </View>
       </View>
-      <TextInput
-        label="search fruit"
-        // secureTextEntry
-        style={{ width: 300 }}
-        right={<TextInput.Icon name="chevron-down" />}
-        onFocus={() => {
-          console.log("press2");
-        }}
-      />
+      <View style={{ position: "absolute" }}>
+        <TextInput
+          label="search fruit"
+          // secureTextEntry
+          style={{ width: 300, marginTop: 200 }}
+          right={<TextInput.Icon name="chevron-down" />}
+          onFocus={() => {
+            console.log("press2");
+          }}
+        />
+        <Text style={{ textTransform: "capitalize" }}>afas asdfa</Text>
+      </View>
     </View>
   );
 }
@@ -138,5 +151,6 @@ const styles = StyleSheet.create({
     // backgroundColor: "#000000",
     alignItems: "center",
     // // justifyContent: "center",
+    // zIndex: 100,
   },
 });
