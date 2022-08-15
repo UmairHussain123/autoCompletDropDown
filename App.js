@@ -1,156 +1,110 @@
-import { StatusBar } from "expo-status-bar";
+import React, { useState, useEffect } from "react";
 import {
-  StyleSheet,
   Text,
-  Touchable,
   View,
+  StyleSheet,
   TouchableOpacity,
-  ScrollView,
+  Alert,
+  Platform,
 } from "react-native";
-import { Button, TextInput, List } from "react-native-paper";
+import Expo, { Constants } from "expo";
+import * as LocalAuthentication from "expo-local-authentication";
 
-import React, { useEffect, useState } from "react";
-import { Leave_type, LeaveReson } from "./assets/data";
+export default App = () => {
+  //   state = {
+  //     compatible: false,
+  //     fingerprints: false,
+  //     result: "",
+  //   };
+  const [compatible1, setCompatible1] = useState(false);
+  const [fingerprint1, setFingerprint1] = useState(false);
+  const [result, setResult] = useState("");
+  useEffect(() => {
+    checkDeviceForHardware();
+    checkForFingerprints();
+  }, []);
+  //   componentDidMount() {
+  //     this.checkDeviceForHardware();
+  //     this.checkForFingerprints();
+  //   }
 
-export default function App() {
-  // useEffect(() => {
-  //   console.log("asdkfj");
-  // }, []);
-
-  const [arr, setArr] = useState(null);
-  let leaveType;
-  const arryFilter = (str) => {
-    if (arr == null || !str) {
-      setArr(Leave_type);
-    } else {
-      console.log(str.toUpperCase());
-      leaveType = Leave_type.filter((leaveType) => {
-        console.log(str.toUpperCase());
-        if (!leaveType.title.toUpperCase().indexOf(str.toUpperCase())) {
-          return true;
-        }
-      });
-      setArr(leaveType);
-    }
+  const checkDeviceForHardware = async () => {
+    let compatible = await LocalAuthentication.hasHardwareAsync();
+    console.log(compatible);
+    setCompatible1(compatible);
   };
-  const [leaveVal, setLeaveVal] = useState("");
-  const [leaveFlag, setLeaveFlag] = useState(false);
-  const [attTypeId, setAttTypeId] = useState();
+
+  const checkForFingerprints = async () => {
+    let fingerprints = await LocalAuthentication.isEnrolledAsync();
+    console.log(fingerprints);
+    setFingerprint1(fingerprints);
+  };
+
+  const scanFingerprint = async () => {
+    let resultLocal = await LocalAuthentication.authenticateAsync();
+    console.log("Scan Result:", result);
+    setResult(resultLocal);
+  };
+
+  showAndroidAlert = () => {
+    Alert.alert(
+      "Fingerprint Scan",
+      "Place your finger over the touch sensor and press scan.",
+      [
+        {
+          text: "Scan",
+          onPress: () => {
+            scanFingerprint();
+          },
+        },
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel"),
+          style: "cancel",
+        },
+      ]
+    );
+  };
+
   return (
     <View style={styles.container}>
-      <View
-        style={{
-          flex: 1,
-          alignSelf: "center",
-          alignContent: "center",
-          // marginTop: 50,
-          top: 100,
-          position: "absolute",
-          // zIndex: 100,
-          // backgroundColor: "red",
-        }}
+      <Text style={styles.text}>
+        Compatible Device? {compatible1 === true ? "True" : "False"}
+      </Text>
+      <Text style={styles.text}>
+        Fingerprings Saved? {fingerprint1 === true ? "True" : "False"}
+      </Text>
+      <TouchableOpacity
+        onPress={Platform.OS === "android" ? showAndroidAlert : scanFingerprint}
+        style={styles.button}
       >
-        <TextInput
-          label="Absence Type"
-          editable
-          value={leaveVal}
-          style={{ width: 300, height: 50 }}
-          // right={<TextInput.Icon name="chevron-down" />}
-          onChangeText={(text) => {
-            setLeaveVal(text);
-            setLeaveFlag(true);
-            arryFilter(text);
-          }}
-          onFocus={() => {
-            setLeaveFlag(true);
-            arryFilter();
-          }}
-          onBlur={() => {
-            setLeaveFlag(false);
-            Leave_type.map((item, index) => {
-              if (leaveVal.toUpperCase() == item.title.toUpperCase()) {
-                console.log("item.id", item.id);
-                setAttTypeId(item.id);
-              }
-            });
-          }}
-        />
-
-        <View
-          style={{
-            position: "absolute",
-            top: 50,
-            height: 100,
-            elevation: 1,
-            zIndex: 1000,
-          }}
-        >
-          <ScrollView style={{}} keyboardShouldPersistTaps={"always"}>
-            {leaveFlag
-              ? arr.map((item, index) => {
-                  return (
-                    <View
-                      key={index}
-                      style={{
-                        width: 300,
-                        borderRadius: 1,
-                        padding: 5,
-                        elevation: 1,
-                        backgroundColor: "white",
-                        // position: "relative",
-                      }}
-                    >
-                      {/* <Button
-                        onPress={() => {
-                          setLeaveVal(item.title);
-                          setLeaveFlag(false);
-                        }}
-                        color="black"
-                        style={{ alignContent: "flex-start" }}
-                      >
-                        {item.title}
-                      </Button> */}
-                      <TouchableOpacity
-                        onPress={() => {
-                          setLeaveVal(item.title);
-                          setAttTypeId(item.id);
-                          setLeaveFlag(false);
-                        }}
-                        style={{ flex: 1 }}
-                      >
-                        <View>
-                          <Text key={index}>{item.title}</Text>
-                        </View>
-                      </TouchableOpacity>
-                    </View>
-                  );
-                })
-              : null}
-          </ScrollView>
-        </View>
-      </View>
-      <View style={{ position: "absolute" }}>
-        <TextInput
-          label="search fruit"
-          // secureTextEntry
-          style={{ width: 300, marginTop: 200 }}
-          right={<TextInput.Icon name="chevron-down" />}
-          onFocus={() => {
-            console.log("press2");
-          }}
-        />
-        <Text style={{ textTransform: "capitalize" }}>afas asdfa</Text>
-      </View>
+        <Text style={styles.buttonText}>SCAN</Text>
+      </TouchableOpacity>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: "#000000",
     alignItems: "center",
-    // // justifyContent: "center",
-    // zIndex: 100,
+    justifyContent: "space-around",
+    backgroundColor: "#ecf0f1",
+  },
+  text: {
+    fontSize: 18,
+    textAlign: "center",
+  },
+  button: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: 150,
+    height: 60,
+    backgroundColor: "#056ecf",
+    borderRadius: 5,
+  },
+  buttonText: {
+    fontSize: 30,
+    color: "#fff",
   },
 });
