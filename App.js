@@ -8,7 +8,7 @@ import {
   ScrollView,
   TextInput,
 } from "react-native";
-import { Button, List } from "react-native-paper";
+import { List, Button, Menu, Provider, Divider } from "react-native-paper";
 
 import React, { useEffect, useState } from "react";
 import { Leave_type, LeaveReson } from "./assets/data";
@@ -17,7 +17,11 @@ export default function App() {
   // useEffect(() => {
   //   console.log("asdkfj");
   // }, []);
-
+  // const [visibleSecond, setVisibleSecond] = React.useState(false);
+  // const [typeOf, setTypeOf] = useState("");
+  // const [type, setType] = useState("");
+  // const openMenuSecond = () => setVisibleSecond(true);
+  // const closeMenuSecond = () => setVisibleSecond(false);
   const [arr, setArr] = useState(null);
   let leaveType;
   const arryFilter = (str) => {
@@ -39,109 +43,229 @@ export default function App() {
   const [attTypeId, setAttTypeId] = useState();
   const [absenceTypeBorderBottomColor, setAbsenceTypeBorderBottomColor] =
     useState("black");
+  const [visible, setVisible] = React.useState(false);
+
+  const openMenu = () => setVisible(true);
+
+  const closeMenu = () => setVisible(false);
   return (
-    <View style={styles.container}>
-      <View
-        style={{
-          flex: 1,
-          alignSelf: "center",
-          alignContent: "center",
-          // marginTop: 50,
-          top: 100,
-          position: "absolute",
-          // zIndex: 100,
-        }}
-      >
-        <TextInput
-          // label="Absence Type"
-          editable
-          value={leaveVal}
+    <Provider>
+      <View style={styles.container}>
+        <View
           style={{
-            width: 300,
-            height: 50,
-            borderWidth: 0.5,
-            borderColor: "black",
-            borderBottomColor: absenceTypeBorderBottomColor,
-            borderBottomWidth: absenceTypeBorderBottomColor == "black" ? 1 : 2,
-            borderRadius: 7,
-            paddingHorizontal: 10,
+            flex: 1,
+            alignSelf: "center",
+            alignContent: "center",
+            // marginTop: 50,
+            top: 100,
+            position: "absolute",
+            // zIndex: 100,
           }}
-          // right={<TextInput.Icon name="chevron-down" />}
-          selectionColor={"#006e51"}
-          placeholder="Absence Type"
-          onChangeText={(text) => {
-            setLeaveVal(text);
-            setLeaveFlag(true);
-            arryFilter(text);
-          }}
-          onFocus={() => {
-            setLeaveFlag(true);
-            arryFilter();
-            setAbsenceTypeBorderBottomColor("#006e51");
-          }}
-          onBlur={() => {
-            setAbsenceTypeBorderBottomColor("black");
-            setLeaveFlag(false);
-            Leave_type.map((item, index) => {
-              if (leaveVal.toUpperCase() == item.title.toUpperCase()) {
-                console.log("item.id", item.id);
-                setAttTypeId(item.id);
+        >
+          <TextInput
+            editable
+            value={leaveVal}
+            style={{
+              // minWidth: 300,
+              // maxWidth: 350,
+              width: 300,
+              height: 50,
+              borderWidth: 0.5,
+              borderColor: "black",
+              borderBottomColor: absenceTypeBorderBottomColor,
+              borderBottomWidth:
+                absenceTypeBorderBottomColor == "black" ? 1 : 2,
+              borderRadius: 7,
+              paddingHorizontal: 10,
+            }}
+            selectionColor={"#006e51"}
+            placeholder="Absence Type"
+            onChangeText={(text) => {
+              setLeaveVal(text);
+              setLeaveFlag(true);
+              arryFilter(text);
+            }}
+            onFocus={() => {
+              setLeaveFlag(true);
+              arryFilter();
+              setAbsenceTypeBorderBottomColor("#006e51");
+            }}
+            onBlur={() => {
+              setLeaveFlag(false);
+              Leave_type.map((item, index) => {
+                if (leaveVal.toUpperCase() == item.title.toUpperCase()) {
+                  console.log("item.id", item.id);
+                  setAttTypeId(item.id);
+                }
+              });
+              setAbsenceTypeBorderBottomColor("black");
+            }}
+          />
+
+          <View
+            style={{
+              position: "absolute",
+              top: 50,
+              height: 100,
+              elevation: 1,
+              zIndex: 1000,
+            }}
+          >
+            <ScrollView style={{}} keyboardShouldPersistTaps={"always"}>
+              {leaveFlag
+                ? arr.map((item, index) => {
+                    return (
+                      <View
+                        key={index}
+                        style={{
+                          width: 300,
+                          borderRadius: 1,
+                          padding: 5,
+                          elevation: 1,
+                          backgroundColor: "white",
+                        }}
+                      >
+                        <TouchableOpacity
+                          onPress={() => {
+                            setLeaveVal(item.title);
+                            setAttTypeId(item.id);
+                            console.log(attTypeId);
+                            setLeaveFlag(false);
+                          }}
+                          style={{ flex: 1 }}
+                        >
+                          <View>
+                            <Text key={index}>{item.title}</Text>
+                          </View>
+                        </TouchableOpacity>
+                      </View>
+                    );
+                  })
+                : null}
+            </ScrollView>
+          </View>
+        </View>
+
+        {/* <TouchableOpacity
+          onPress={type == "" ? closeMenuSecond : openMenuSecond}
+        >
+          <View
+            style={{
+              borderWidth: 0.5,
+              borderColor: "gray",
+              // flex: 1,
+              borderRadius: 7,
+              flexDirection: "row",
+              marginTop: 180,
+              justifyContent: "space-between",
+            }}
+          >
+            <Text
+              style={{
+                alignSelf: "center",
+                fontSize: 15,
+                fontWeight: "normal",
+                marginLeft: 10,
+              }}
+            >
+              Absence Reason
+            </Text>
+            <Menu
+              style={{}}
+              visible={visibleSecond}
+              onDismiss={closeMenuSecond}
+              anchor={
+                <Button
+                  style={{
+                    borderWidth: 1,
+                    height: 40,
+                    alignSelf: "center",
+                    justifyContent: "center",
+                  }}
+                  labelStyle={{ color: "#006e51" }}
+                  icon="chevron-down"
+                >
+                  {typeOf}
+                </Button>
               }
-            });
-          }}
-        />
+              statusBarHeight={-19}
+            >
+              {LeaveReson.map((item, index) => {
+                if (item.AbsAttTypeID == attTypeId) {
+                  // console.log(item.typeName);
+                  return (
+                    <View key={index}>
+                      {item.typeName.map((val, ind) => {
+                        console.log("valval", val);
+                        // console.log(
+                        //   "val.AbsReasonID-()" + ind + "",
+                        //   val.AbsReasonID
+                        // );
+                        return (
+                          <Menu.Item
+                            key={ind}
+                            onPress={() => {
+                              setTypeOf(val.Name);
+                              setAttResonId(val.AbsReasonID);
+                              closeMenuSecond(false);
+                            }}
+                            title={val.Name}
+                          />
+                        );
+                      })}
+                    </View>
+                  );
+                }
+              })}
+            </Menu>
+          </View>
+        </TouchableOpacity> */}
 
         <View
           style={{
-            position: "absolute",
-            top: 50,
-            height: 100,
-            elevation: 1,
-            zIndex: 1000,
+            paddingTop: 200,
+            flexDirection: "row",
+            justifyContent: "center",
           }}
         >
-          <ScrollView style={{}} keyboardShouldPersistTaps={"always"}>
-            {leaveFlag
-              ? arr.map((item, index) => {
-                  return (
-                    <View
-                      key={index}
-                      style={{
-                        width: 300,
-                        borderRadius: 1,
-                        padding: 5,
-                        elevation: 1,
-                        backgroundColor: "white",
-                      }}
-                    >
-                      <TouchableOpacity
-                        onPress={() => {
-                          setLeaveVal(item.title);
-                          setAttTypeId(item.id);
-                          setLeaveFlag(false);
-                        }}
-                        style={{ flex: 1 }}
-                      >
+          <Menu
+            visible={visible}
+            onDismiss={closeMenu}
+            anchor={<Button onPress={openMenu}>^ </Button>}
+          >
+            {LeaveReson.map((val, index) => {
+              if (val.AbsAttTypeID == attTypeId) {
+                return (
+                  <View>
+                    {val.typeName.map((item, ind) => {
+                      console.log("true dddd", item.title);
+                      return (
                         <View>
-                          <Text key={index}>{item.title}</Text>
+                          <Menu.Item onPress={() => {}} title={item.title} />
                         </View>
-                      </TouchableOpacity>
-                    </View>
-                  );
-                })
-              : null}
-          </ScrollView>
+                      );
+                    })}
+                  </View>
+                );
+              }
+            })}
+
+            {/* <Menu.Item
+              onPress={() => {
+                setVisible(false);
+              }}
+              title="Item 3"
+            /> */}
+
+            {/* <Menu.Item onPress={() => {}} title="Item 1" />
+            <Menu.Item onPress={() => {}} title="Item 2" />
+            <Divider />
+            <Menu.Item onPress={() => {}} title="Item 3" /> */}
+          </Menu>
         </View>
+        <TextInput></TextInput>
       </View>
-      <View style={{ marginTop: 140, marginRight: 200 }}>
-        <TextInput
-          style={styles.input}
-          // onChangeText={onChangeText}
-          value={"ASDf"}
-        />
-        {/* <Text style={{ textTransform: "capitalize" }}>afas asdfa</Text> */}
-      </View>
-    </View>
+    </Provider>
   );
 }
 
