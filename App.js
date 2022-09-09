@@ -17,11 +17,13 @@ export default function App() {
   // useEffect(() => {
   //   console.log("asdkfj");
   // }, []);
-  // const [visibleSecond, setVisibleSecond] = React.useState(false);
+  const [visibleSecond, setVisibleSecond] = React.useState(false);
   // const [typeOf, setTypeOf] = useState("");
-  // const [type, setType] = useState("");
-  // const openMenuSecond = () => setVisibleSecond(true);
-  // const closeMenuSecond = () => setVisibleSecond(false);
+  const [type, setType] = useState("");
+  const openMenuSecond = () => setVisibleSecond(true);
+  const closeMenuSecond = () => setVisibleSecond(false);
+
+  const [attResonId, setAttResonId] = useState();
   const [arr, setArr] = useState(null);
   let leaveType;
   const arryFilter = (str) => {
@@ -146,92 +148,38 @@ export default function App() {
           </View>
         </View>
 
-        {/* <TouchableOpacity
-          onPress={type == "" ? closeMenuSecond : openMenuSecond}
-        >
-          <View
-            style={{
-              borderWidth: 0.5,
-              borderColor: "gray",
-              // flex: 1,
-              borderRadius: 7,
-              flexDirection: "row",
-              marginTop: 180,
-              justifyContent: "space-between",
-            }}
-          >
-            <Text
-              style={{
-                alignSelf: "center",
-                fontSize: 15,
-                fontWeight: "normal",
-                marginLeft: 10,
-              }}
-            >
-              Absence Reason
-            </Text>
-            <Menu
-              style={{}}
-              visible={visibleSecond}
-              onDismiss={closeMenuSecond}
-              anchor={
-                <Button
-                  style={{
-                    borderWidth: 1,
-                    height: 40,
-                    alignSelf: "center",
-                    justifyContent: "center",
-                  }}
-                  labelStyle={{ color: "#006e51" }}
-                  icon="chevron-down"
-                >
-                  {typeOf}
-                </Button>
-              }
-              statusBarHeight={-19}
-            >
-              {LeaveReson.map((item, index) => {
-                if (item.AbsAttTypeID == attTypeId) {
-                  // console.log(item.typeName);
-                  return (
-                    <View key={index}>
-                      {item.typeName.map((val, ind) => {
-                        console.log("valval", val);
-                        // console.log(
-                        //   "val.AbsReasonID-()" + ind + "",
-                        //   val.AbsReasonID
-                        // );
-                        return (
-                          <Menu.Item
-                            key={ind}
-                            onPress={() => {
-                              setTypeOf(val.Name);
-                              setAttResonId(val.AbsReasonID);
-                              closeMenuSecond(false);
-                            }}
-                            title={val.Name}
-                          />
-                        );
-                      })}
-                    </View>
-                  );
-                }
-              })}
-            </Menu>
-          </View>
-        </TouchableOpacity> */}
-
         <View
           style={{
-            paddingTop: 200,
+            // paddingTop: 200,
+            marginTop: 200,
             flexDirection: "row",
             justifyContent: "center",
+            borderWidth: 0.5,
+            borderRadius: 7,
+            justifyContent: "space-between",
+            width: 300,
           }}
         >
+          <Text
+            style={{
+              alignSelf: "center",
+
+              fontSize: 15,
+              fontWeight: "normal",
+              marginLeft: 10,
+            }}
+          >
+            Absence Reason
+          </Text>
           <Menu
+            style={{}}
             visible={visible}
             onDismiss={closeMenu}
-            anchor={<Button onPress={openMenu}>^ </Button>}
+            anchor={
+              <Button onPress={openMenu} style={{ width: 200 }}>
+                {type}
+              </Button>
+            }
           >
             {LeaveReson.map((val, index) => {
               if (val.AbsAttTypeID == attTypeId) {
@@ -241,7 +189,14 @@ export default function App() {
                       console.log("true dddd", item.title);
                       return (
                         <View>
-                          <Menu.Item onPress={() => {}} title={item.title} />
+                          <Menu.Item
+                            onPress={() => {
+                              setType(item.title);
+                              setAttResonId(item.id);
+                              closeMenu(false);
+                            }}
+                            title={item.title}
+                          />
                         </View>
                       );
                     })}
@@ -249,18 +204,6 @@ export default function App() {
                 );
               }
             })}
-
-            {/* <Menu.Item
-              onPress={() => {
-                setVisible(false);
-              }}
-              title="Item 3"
-            /> */}
-
-            {/* <Menu.Item onPress={() => {}} title="Item 1" />
-            <Menu.Item onPress={() => {}} title="Item 2" />
-            <Divider />
-            <Menu.Item onPress={() => {}} title="Item 3" /> */}
           </Menu>
         </View>
         <TextInput></TextInput>
