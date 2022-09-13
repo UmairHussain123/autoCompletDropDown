@@ -35,6 +35,8 @@ export default function App() {
         console.log(item);
       })} */}
       <Text>Contacts Module Example</Text>
+      <Text>Contacts Module Example</Text>
+      <Text>Contacts Module Example</Text>
     </View>
   );
 }
